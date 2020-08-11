@@ -1,3 +1,14 @@
-{
-    "Crucify":"KingCrucify#1982"
-}
+[
+    {
+        "discordname": "Crucify",
+        "valorantid": "KingCrucify#1982"
+    },
+    {
+        "discordname": "Crucify",
+        "valorantid": "GhostExodus#3200"
+    },
+    {
+        "discordname": "Osiris",
+        "valorantid": "Osiris#5066"
+    }
+]
