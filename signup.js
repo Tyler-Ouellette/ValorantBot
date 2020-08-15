@@ -4,8 +4,7 @@ const User = mongoose.model('User');
 const signup = async (discordname, valorantid) => {
     
     try {
-        await new User({ discordname, valorantid}).save();
-    //     await User.insert(user);
+        await new User({ discordname: discordname.toLowerCase(), valorantid: valorantid.toLowerCase()}).save();
     } catch (error) {
         return "Failed because " + error.message;
     }

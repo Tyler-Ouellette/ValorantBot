@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const userRank = require('./getRank.js');
+const namedRank = require('./convertRank.js');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const signup = require('./signup.js')
@@ -72,25 +73,6 @@ client.on("message", async function(message) {
                 
                 message.reply(`Adding you to the system ${result}`);
                 
-                
-                
-                // fs.readFile('blitzUsers.json', 'utf8', function readFileCallback(err, data){
-                //     if (err){
-                //         console.log(err);
-                //     } else {
-                //     let obj = JSON.parse(data); //now it an object
-                //     obj.users.push({
-                //         discordname: author,
-                //         valorantid: args[0]
-                        
-                //     }); //add some data
-                //     const json = JSON.stringify(obj); //convert it back to json
-                //     fs.writeFile('blitzUsers.json', json, 'utf8', function(err) {
-                //         if (err) console.log(error);
-                //         message.reply('Added you to the list');
-                //     }); 
-                // }});
-                
             }
             else {
                 message.reply('uhhh dude thats not how you do it.... Format it like this: NAME#TAG');
@@ -102,18 +84,30 @@ client.on("message", async function(message) {
             }
             if (numArgs.length === 1){
                 // Check if user is in blitz, if not tell them to use !signMeUp NAME#TAG
-                const rank = userRank.getRank(args[0]);
-                message.reply(`Your rank is ${rank}` );
+                const rank = await userRank.getRank(args[0]);
+                if (rank !== undefined){
+                    message.reply(namedRank.convertRank(rank));
+                }
+                else {
+                    message.reply('User Not Registered');
+                }
             }
             break;
         case "ranks":
             // message.reply(`Do you even have blitzgg dud?`);
             // TODO: make this display all users ranks
-            
+            const users = await userRank.getAllRanks();
+            users.map( async (user) => {
+                try {
+                    const rank = await userRank.getRank(user.discordname);
+                    message.reply(`${user.discordname}'s rank is ${rank}`);
+                } catch (error) {
+                    console.error(error);                    
+                }
+            })
             break;
         case "help":
-            message.reply('Get Cucked kid');
-            // TODO: make this actually list command options lol
+            message.reply('Get Cucked kid jk try \n !signup !rank !ranks !ping !help');
             break;
         default:
             message.reply(`Bruh... don't be stupid... you know how to use a bot. try !help`);
