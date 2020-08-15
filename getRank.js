@@ -6,7 +6,7 @@ const getRank = async (username) => {
     try {
         const user = await User.findOne({ discordname: username.toLowerCase() });
         const slug = 'https://valorant.iesdev.com/player/';
-        const nametag = user.valorantid.replace('#', '-');
+        const nametag = user.valorantid.replace('#', '-').replace(' ', '%20');
         const userUrl = slug + nametag.toLowerCase();
         
         try {

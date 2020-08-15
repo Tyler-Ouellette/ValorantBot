@@ -52,7 +52,7 @@ client.on("message", async function(message) {
     
     const numArgs = args.map(x => parseInt(x));
     
-    const signupRegex = /\w+#[0-9A-Za-z]+/;
+    const signupRegex = /([\w]+)#[0-9A-Za-z]+/;
 
     
     // TODO: Take the switch commands and break them into named functions and import them
@@ -95,19 +95,21 @@ client.on("message", async function(message) {
             break;
         case "ranks":
             // message.reply(`Do you even have blitzgg dud?`);
-            // TODO: make this display all users ranks
             const users = await userRank.getAllRanks();
             users.map( async (user) => {
                 try {
                     const rank = await userRank.getRank(user.discordname);
-                    message.reply(`${user.discordname}'s rank is ${rank}`);
+                    if (rank !== undefined){
+                        message.reply(`${user.discordname}'s rank is ${userRank.convertRank(rank)}`);
+                        return;
+                    }
                 } catch (error) {
                     console.error(error);                    
                 }
             })
             break;
         case "help":
-            message.reply('Get Cucked kid jk try \n !signup !rank !ranks !ping !help');
+            message.reply('Get Cucked kid.... jk try: \n !ping --> See bots ping if it is up and running \n !signup -> run it as !signup NAME#TAGNUM\n !rank --> run it as !rank DISCORDUSERNAME ');
             break;
         default:
             message.reply(`Bruh... don't be stupid... you know how to use a bot. try !help`);
