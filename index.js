@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const userRank = require('./getRank.js');
-const namedRank = require('./convertRank.js');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const signup = require('./signup.js')
@@ -66,7 +65,7 @@ client.on("message", async function(message) {
             if (numArgs.length === 0){
                 message.reply(`How can I sign you up if you didn't give me your id.... Dumbass. Format it like this: NAME#TAG`);
             }
-            if (numArgs.length === 1 && args[0].match(signupRegex)){
+            if (numArgs.length === 1 && args[0].trim().match(signupRegex)){
                 const discordname = message.author.username;
                 const valorantid = args[0];
                 const result = await signup.signup(discordname, valorantid);
@@ -83,10 +82,9 @@ client.on("message", async function(message) {
                 message.reply('Whos rank do you want idiot? !rank DISCORDUSER');
             }
             if (numArgs.length === 1){
-                // Check if user is in blitz, if not tell them to use !signMeUp NAME#TAG
                 const rank = await userRank.getRank(args[0]);
                 if (rank !== undefined){
-                    message.reply(namedRank.convertRank(rank));
+                    message.reply(userRank.convertRank(rank));
                 }
                 else {
                     message.reply('User Not Registered');
@@ -95,7 +93,7 @@ client.on("message", async function(message) {
             break;
         case "ranks":
             // message.reply(`Do you even have blitzgg dud?`);
-            const users = await userRank.getAllRanks();
+            const users = await userRank.getAllUsers();
             users.map( async (user) => {
                 try {
                     const rank = await userRank.getRank(user.discordname);
@@ -108,8 +106,28 @@ client.on("message", async function(message) {
                 }
             })
             break;
+        case "bombbitch":
+            const bombUsers = await userRank.getAllUsers();
+            var greatest = 0;
+            var bombBitch;
+            bombUsers.reduce( async (greatest, cur, idx, user) => {
+                try {
+                    const plants = await userRank.getPlants(user.discordname);
+                    if (plants !== undefined){
+                            if (plants > greatest){
+                                this.greatest = plants;
+                                this.bombBitch = user.discordname 
+                            }                       
+                        };
+                        return;
+                    } catch (error) {
+                        console.error(error);                    
+                    }
+                });
+                message.reply(`${bombBitch} is the Bomb Bitch`);
+            break;
         case "help":
-            message.reply('Get Cucked kid.... jk try: \n !ping --> See bots ping if it is up and running \n !signup -> run it as !signup NAME#TAGNUM\n !rank --> run it as !rank DISCORDUSERNAME ');
+            message.reply('Get Cucked kid.... jk try: \n !ping --> See bots ping if it is up and running \n !signup -> run it as !signup NAME#TAGNUM\n !rank --> run it as !rank DISCORDUSERNAME \n !BombBitch To see who it is\n');
             break;
         default:
             message.reply(`Bruh... don't be stupid... you know how to use a bot. try !help`);

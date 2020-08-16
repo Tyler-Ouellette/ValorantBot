@@ -1,8 +1,29 @@
-const mongoose = require('mongoose');
 const axios = require('axios');
 const User = require('./models/User');
 
+
+
 const getRank = async (username) => {
+    try {
+        const user = this.getUserStats(username)
+        return user.data.ranks.competitive.tier;
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getPlants = async (username) => {
+    try {
+        const user = await this.getUserStats(username);
+        return user.data.stats.competitive.career.plants;
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getUserStats = async (username) => {
     try {
         const user = await User.findOne({ discordname: username.toLowerCase() });
         const slug = 'https://valorant.iesdev.com/player/';
@@ -11,7 +32,7 @@ const getRank = async (username) => {
         
         try {
           const response = await axios.get(userUrl);
-          return response.data.ranks.competitive.tier;
+          return response;
           
         } catch (error) {
           console.error(error);
@@ -21,7 +42,7 @@ const getRank = async (username) => {
     }
 }
 
-const getAllRanks = async () => {
+const getAllUsers = async () => {
     try {
         const allUsers = await User.find();
         return allUsers;
@@ -63,5 +84,7 @@ const convertRank = (rank) => {
 }
 
 module.exports.getRank = getRank;
-module.exports.getAllRanks = getAllRanks;
+module.exports.getPlants = getPlants;
+module.exports.getUserStats = getUserStats;
+module.exports.getAllUsers = getAllUsers;
 module.exports.convertRank = convertRank;
